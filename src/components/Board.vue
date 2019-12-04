@@ -1,133 +1,163 @@
 <template>
-  <table class="board">
-    <tbody>
-      <tr v-for="x in 9" :key="x" >
-        <td v-for="y in 9" :key="y" >
-          <div class="box" @click="putPiece">
-            <div v-for="piece in pieceis" :key="piece.id">
-              <div v-if="piece.enemyPosition.includes((y * 10) + x) || piece.myPosition.includes((y * 10) + x)">
-                  <div v-if="piece.id==1">
-                    <pawn></pawn>
-                  </div>
-                  <div v-else-if="piece.id==2">
-                    香
-                  </div>
-                  <div v-else-if="piece.id==3">
-                    桂
-                  </div>
-                  <div v-else-if="piece.id==4">
-                    銀
-                  </div>
-                  <div v-else-if="piece.id==5">
-                    金
-                  </div>
-                  <div v-else-if="piece.id==6">
-                    角
-                  </div>
-                  <div v-else-if="piece.id==7">
-                    飛
-                  </div>
-                  <div v-else-if="piece.id==8">
-                    王
-                  </div>
-              </div>
-            </div>
-          </div>
-        </td>
-      </tr>
-    </tbody>
+  <table>
+    <tr>
+      <th>9</th><th>8</th><th>7</th><th>6</th><th>5</th><th>4</th><th>3</th><th>2</th><th>1</th>
+    </tr>
+    <tr v-for="x in 9" :key="x" >
+      <td v-for="y in 9" :key="y" >
+          <img :src="pieceis[board[x-1][y-1]].img_src" @click="choicePiece(x-1,y-1)">
+      </td>
+      <th>{{x}}</th>
+    </tr>
   </table>
 </template>
 
 <script>
-import Pawn from "./piece/Pawn"
-
+import { log } from 'util';
 export default {
-  components: {
-    Pawn
-  },
   data() {
     return {
       pieceis: {
-        pawn: {
-          id: 1,
-          enemyPosition: [
-            13, 23, 33, 43, 53, 63, 73, 83, 93
-          ],
-          myPosition: [
-            17, 27, 37, 47, 57, 67, 77, 87, 97
-          ]
+        0: {
+          name: " ",
+          img_src: require('../../assets/pieces/field.jpg')
         },
-        lance: {
-          id: 2,
-          enemyPosition: [
-            11, 91
-          ],
-          myPosition: [
-            19, 99
-          ]
+        1: {
+          name: "歩",
+          img_src: require('../../assets/pieces/hu_sita.jpg'),
+          range: {
+            x: -1,
+            y: 0
+          }
         },
-        knight: {
-          id: 3,
-          enemyPosition: [
-            21, 81
-          ],
-          myPosition: [
-            29, 89
-          ]
+        2: {
+          name: "香",
+          img_src: require('../../assets/pieces/kyou_sita.jpg')
+
         },
-        silverGeneral: {
-          id: 4,
-          enemyPosition: [
-            31, 71
-          ],
-          myPosition: [
-            39, 79
-          ]
+        3: {
+          name: "桂",
+          img_src: require('../../assets/pieces/keima_sita.jpg')
+
         },
-        goldGeneral: {
-          id: 5,
-          enemyPosition: [
-            41, 61
-          ],
-          myPosition: [
-            49, 69
-          ]
+        4: {
+          name: "銀",
+          img_src: require('../../assets/pieces/gin_sita.jpg')
+
         },
-        bishop: {
-          id: 6,
-          enemyPosition: [
-            82
-          ],
-          myPosition: [
-            28
-          ]
+        5: {
+          name: "金",
+          img_src: require('../../assets/pieces/kin_sita.jpg')
+
         },
-        rook: {
-          id: 7,
-          enemyPosition: [
-            22,
-          ],
-          myPosition: [
-            88
-          ]
+        6: {
+          name: "角",
+          img_src: require('../../assets/pieces/kaku_sita.jpg')
+
         },
-        king: {
-          id: 8,
-          enemyPosition: [
-            51
-          ],
-          myPosition: [
-            59
-          ]
+        7: {
+          name: "飛",
+          img_src: require('../../assets/pieces/hisya_sita.jpg')
+
+        },
+        8: {
+          name: "王",
+          img_src: require('../../assets/pieces/ou_sita.jpg')
+
+        },
+        11: {
+          name: "歩",
+          img_src: require('../../assets/pieces/hu_ue.jpg')
+
+        },
+        12: {
+          name: "香",
+          img_src: require('../../assets/pieces/kyou_ue.jpg')
+
+        },
+        13: {
+          name: "桂",
+          img_src: require('../../assets/pieces/keima_ue.jpg')
+
+        },
+        14: {
+          name: "銀",
+          img_src: require('../../assets/pieces/gin_ue.jpg')
+
+        },
+        15: {
+          name: "金",
+          img_src: require('../../assets/pieces/kin_ue.jpg')
+
+        },
+        16: {
+          name: "角",
+          img_src: require('../../assets/pieces/kaku_ue.jpg')
+
+        },
+        17: {
+          name: "飛",
+          img_src: require('../../assets/pieces/hisya_ue.jpg')
+
+        },
+        18: {
+          name: "王",
+          img_src: require('../../assets/pieces/ou_ue.jpg')
+
         }
+
       },
-      board: [9][9]
+      selectedPiece: 0,
+      selectFlg: false,
+      choicedLocation: {
+        x: 0,
+        y: 0
+      },
+      board: [
+        [12,13,14,15,18,15,14,13,12],
+        [0,17,0,0,0,0,0,16,0],
+        [11,11,11,11,11,11,11,11,11],
+        [0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0],
+        [1,1,1,1,1,1,1,1,1],
+        [0,6,0,0,0,0,0,7,0],
+        [2,3,4,5,8,5,4,3,2]
+      ]
     }
   },
   methods: {
-    putPiece() {
-
+    choicePiece(x,y) {
+      if (this.selectFlg) {
+        this.putPiece(x,y)
+      } else {
+        this.pickPiece(x,y)
+      }
+    },
+    pickPiece(x,y) {
+      if (this.board[x][y]==0) {
+        return;
+      }
+      this.setChoicedLocation(x,y);
+      this.selectedPiece = this.board[x][y]
+      this.board[x].splice(y,1,0);
+      this.selectFlg = true;
+    },
+    putPiece(x,y) {
+      this.validateMove(x,y);
+      this.setChoicedLocation(0,0);
+      this.board[x].splice(y,1,this.selectedPiece);
+      this.selectFlg = false;
+    },
+    validateMove(x,y) {
+      if (!((x-this.choicedLocation.x == this.pieceis[this.selectedPiece].range.x) && (y-this.choicedLocation.y == this.pieceis[this.selectedPiece].range.y))) {
+        alert('no');
+        return
+      }
+    },
+    setChoicedLocation(x,y) {
+      this.choicedLocation.x = x;
+      this.choicedLocation.y = y;
     }
   },
   computed: {
@@ -136,13 +166,15 @@ export default {
 </script>
 
 <style scoped>
-.board {
-  font-size: 30px;
+table {
+  border-collapse: collapse;
 }
-.box {
-  margin: 0;
+table td {
+  padding: 0px;
+  border: solid 1px;
+}
+img{
   width: 60px;
   height: 60px;
-  border: 1px solid black;
 }
 </style>
